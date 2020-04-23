@@ -1,0 +1,687 @@
+openapi: 3.0.0
+info:
+  description: '[drl.sytes.net, #drl](http://drl.sytes.net)'
+  version: '1.0.0'
+  title: drl-server-apidocs
+  contact:
+    email: sic@wru.vn
+    name: Student Informatic Club
+    url: https://www.facebook.com/clbtinhocsinhvien/
+
+servers:
+  - url: http://localhost:4000
+    description: localhost
+  - url: https://drl.sytes.net:4000
+    description: drl.sytes.net
+
+tags:
+  - name: Account
+    description: Tài khoản
+  - name: Event
+    description: Sự kiện
+  - name: Participant
+    description: Danh sách tham gia
+  - name: Attendance
+    description: Tham dự
+  - name: Scan code event
+    description: Quét mã QRcode
+
+paths:
+  /users/login:
+    post:
+      tags:
+        - Account
+      summary: Đăng nhập
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required: 
+                - studentCode
+                - password
+              properties:
+                studentCode:
+                  type: string
+                  description:  Mã sinh viên
+                password:
+                  type: string
+                  description: Mật khẩu
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+  
+  /users/register:
+    post:
+      tags: 
+        - Account
+      summary: Đăng ký tài khoản
+      security:
+        - Authorization: []
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required: 
+                - studentCode
+                - fullName
+                - birthday
+                - roles
+                - myClasses
+              properties:
+                studentCode:
+                  type: string
+                  description: Mã sinh viên
+                fullName:
+                  type: string
+                  description: Họ tên
+                birthday:
+                  type: string
+                  format: date
+                  description: Ngày sinh (dd/mm/yyyy)
+                roles:
+                  type: array
+                  description: Quyền
+                  items:
+                    $ref: '#/components/schemas/Roles'
+                myClasses:
+                  type: array
+                  description: Lớp (Đối với giảng viên sẽ có nhiều lớp )
+                  items:
+                    type: object
+                    required: 
+                      - _id
+                    properties:
+                      _id:
+                        type: string
+                isPresident:
+                  type: boolean
+                  default: false
+                  description: Là giảng viên hay không
+      responses:
+        '200':
+          description: success
+          
+  /users/{userId}:
+    get:
+      tags:
+        - Account
+      summary: Lấy thông tin user
+      security:
+        - Authorization: []
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: id sinh viên
+          schema:
+            type: string
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          
+  /users/change-password:
+    post:
+      tags: 
+        - Account
+      summary: Đổi mật khẩu
+      security:
+        - Authorization: []
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required: 
+                - oldPassword
+                - newPassword
+              properties:
+                oldPassword:
+                  type: string
+                  description: Mật khẩu cũ
+                newPassword:
+                  type: string
+                  description: Mật khẩu mới
+      responses:
+        '200':
+          description: success
+
+  /events:
+    get:
+      tags:
+        - Event
+      summary: Lấy danh sách các event
+      security:
+        - Authorization: []
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Event'
+
+    post:
+      tags:
+        - Event
+      summary: Thêm một event
+      security:
+        - Authorization: []
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - name
+                - address
+                - startTime
+                - endTime
+                - point
+              properties:
+                name:
+                  type: string
+                address:
+                  type: string
+                startTime:
+                  type: string
+                  format: date-time
+                endTime:
+                  type: string
+                  format: date-time
+                point:
+                  type: number
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+  
+  /events/{eventId}:
+    get:
+      tags:
+       - Event
+      summary: Tìm event bằng id
+      security:
+        - Authorization: []
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          description: id sự kiện
+          schema:
+            type: string
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+    
+    put:
+      tags:
+       - Event
+      summary: Sửa event
+      security:
+        - Authorization: []
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          description: id sự kiện
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                address:
+                  type: string
+                startTime:
+                  type: string
+                  format: date-time
+                endTime:
+                  type: string
+                  format: date-time
+                point:
+                  type: number
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+                
+    delete:
+      tags:
+       - Event
+      summary: Xóa sự kiện bằng id
+      security:
+        - Authorization: []
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          description: id sự kiện
+          schema:
+            type: string
+      responses:
+        '200':
+          description: success
+          
+  /events/{eventId}/participants:
+    post:
+      tags:
+        - Participant
+      summary: Đăng ký danh sách tham gia sự kiện
+      security:
+        - Authorization: []
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          description: id sự kiện
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - users
+              properties:
+                userAuthorized:
+                  type: object
+                  description: Người được ủy quyền điểm danh Mặc đinh là lớ trưởng)
+                  properties:
+                    _id:
+                      type: string
+                      description: id của user
+                users:
+                  type: array
+                  description: Danh sách người tham gia
+                  items:
+                    type: object
+                    properties:
+                      _id:
+                        type: string
+                        description: id của user
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+                
+    put:
+      tags:
+        - Participant
+      summary: Sửa danh sách tham gia sự kiện
+      security:
+        - Authorization: []
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          description: id sự kiện
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - users
+              properties:
+                userAuthorized:
+                  type: object
+                  description: Người được ủy quyền điểm danh Mặc đinh là lớ trưởng)
+                  properties:
+                    _id:
+                      type: string
+                      description: id của user
+                users:
+                  type: array
+                  description: Danh sách người tham gia
+                  items:
+                    type: object
+                    properties:
+                      _id:
+                        type: string
+                        description: id của user
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+
+  /events/{eventId}/attendance:
+    post:
+      tags:
+       - Attendance
+      summary: Generate code
+      security:
+        - Authorization: []
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          description: id sự kiện
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                activationTime:
+                  type: number
+                  description: Kích hoạt code trong 'activationTime' phút
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    
+    delete:
+      tags:
+       - Attendance
+      summary: Abort code
+      security:
+        - Authorization: []
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          description: id sự kiện
+          schema:
+            type: string
+      responses:
+        '200':
+          description: success
+
+  /events/scan:
+    get:
+      tags:
+       - Scan code event
+      summary: Quét mã QR
+      security:
+        - Authorization: []
+      parameters:
+        - name: code
+          in: query
+          required: true
+          description: Mã code scan được từ người điểm danh
+          schema:
+            type: string
+      responses:
+        '200':
+          description: success
+          
+components:
+  schemas:
+    Roles:
+      type: string
+      enum:
+        - admin
+        - user
+        - lecturer
+        - president
+        - event
+    MyClass:
+      type: object
+      description: Lớp
+      required:
+        - name
+        - faculty
+        - course
+        - classPresident
+      properties:
+        name:
+          type: string
+          description: Tên lớp
+        faculty:
+          type: object
+          description: Khoa
+        course:
+          type: string
+          description: Khóa học (2017-2022)
+        classPresident:
+          type: object
+          description: Giáo viên chủ nhiệm
+
+    User:
+      type: object
+      description: Người dùng
+      required:
+        - studentCode
+        - fullName
+        - password
+        - email
+        - myClasses
+        - birthday
+      properties:
+        studentCode:
+          type: string
+          description: Mã sinh viên
+        fullName:
+          type: string
+          description: Họ tên
+        password:
+          type: string
+          description: Mật khẩu
+        email:
+          type: string
+          description: Email
+        myClasses:
+          type: array
+          description: Lớp
+          items:
+            $ref: '#/components/schemas/MyClass'
+        avatar:
+          type: string
+          description: Ảnh
+        faculty:
+          type: object
+          description: Khoa
+        birthday:
+          type: string
+          format: date
+          description: Ngày sinh
+        isPresident:
+          type: boolean
+          default: false
+          description: Giảng viên
+        roles:
+          type: array
+          description: Quyền
+          items:
+            $ref: '#/components/schemas/Roles'
+        token:
+          type: array
+          items:
+            type: string
+
+    Event:
+      type: object
+      required:
+        - name
+        - address
+        - startTime
+        - endTime
+        - point
+      properties:
+        name:
+          type: string
+          description: Tên sự kiện
+        address:
+          type: string
+          description: Nơi diễn ra sự kiện
+        startTime:
+          type: string
+          format: date-time
+          description: Thời gian diễn ra sự kiện
+        endTime:
+          type: string
+          format: date-time
+          description: Thời gian kết thúc sự kiện
+        point:
+          type: number
+          description: Điểm cộng của sự kiện
+        createdBy:
+          type: array
+          description: Được tạo bởi
+          items:
+            type: object
+            properties:
+              user:
+                $ref: '#/components/schemas/User'
+                description: Người tạo
+              timestamp:
+                type: string
+                format: date-time
+                description: Thời gian tạo
+        updatedBy:
+          type: object
+          description: Được sửa bởi
+          properties:
+            user:
+              $ref: '#/components/schemas/User'
+              description: Người sửa
+            oldVersion:
+              type: object
+              description: Nội dung cũ
+              properties:
+                name:
+                  type: string
+                address:
+                  type: string
+                startTime:
+                  type: string
+                  format: date-time
+                endTime:
+                  type: string
+                  format: date-time
+                point:
+                  type: number
+            timestamp:
+              type: string
+              format: date-time
+              description: Thời gian sửa
+        deletedBy:
+          type: object
+          description: Xóa bởi
+          properties:
+            user:
+              $ref: '#/components/schemas/User'
+              description: Người xóa
+            timestamp:
+              type: string
+              format: date-time
+              description: Thời gian xóa
+
+    Participant:
+      type: object
+      description: Danh sách tham dự sự kiện
+      required:
+        - event
+        - class
+        - userAuthorized
+        - users
+      properties:
+        event:
+          $ref: '#/components/schemas/Event'
+          description: Sự kiện
+        class:
+          $ref: '#/components/schemas/MyClass'
+          description: Lớp
+        userAuthorized:
+          $ref: '#/components/schemas/User'
+          description: Người được ủy quyền điểm danh
+        code:
+          type: object
+          description: Code để tạo QRcode
+          properties:
+            token:
+              type: string
+            createdAt:
+              type: string
+              format: date-time
+              description: Được tạo lúc
+            activationTime:
+              type: number
+              description: code được active trong 'activationTime' phút'
+            status:
+              type: boolean
+              description: Trạng thái kích hoạt của code
+        users:
+          type: array
+          description: Danh sách người tham dự của lớp
+          items:
+            $ref: '#/components/schemas/User'
+
+    TrainingPoint:
+      type: object
+      description: Điểm rèn luyện
+      properties:
+        user:
+          description: Sinh viên
+          $ref: '#/components/schemas/User'
+        totalPoints:
+          type: number
+          description: Tổng điểm
+        semester:
+          type: string
+          description: Học kỳ (1_2018_2019)
+        details:
+          type: array
+          description: Chi tiết
+          items:
+            type: object
+            properties:
+              ordinalNumber:
+                type: string
+                description: Mã chấm điểm
+              point:
+                type: number
+                description: Số điểm theo mã
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/Event'
+  
+  securitySchemes:
+    Authorization:
+      type: apiKey
+      name: authorization
+      in: header
