@@ -11,7 +11,7 @@ info:
 servers:
   - url: http://localhost:4000
     description: localhost
-  - url: http://drl.sytes.net:4000
+  - url: http://drl.sytes.net/api
     description: drl.sytes.net
 
 tags:
