@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  description: '[drl.sytes.net, #drl](http://drl.sytes.net), [#drone](http://drone-drl.sytes.net)'
+  description: '[#drl](http://drl.sytes.net), [#api-docs](http://api-drl.sytes.net/docs), [#drone](http://drone-drl.sytes.net)'
   version: '1.0.0'
   title: drl-server-apidocs
   contact:
