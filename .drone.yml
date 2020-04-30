@@ -17,7 +17,7 @@ steps:
         - git reset HEAD --hard
         - git pull
         - yarn install
-        - pm2 reload api-docs
+        - pm2 restart api-docs
     when:
       branch:
         - master
