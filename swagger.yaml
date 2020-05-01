@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   description: '[#drl](http://drl.sytes.net), [#api-docs](http://api-drl.sytes.net/docs), [#drone](http://drone-drl.sytes.net)'
-  version: '1.0.0'
+  version: '1.0.1'
   title: drl-server-apidocs
   contact:
     email: sic@wru.vn
