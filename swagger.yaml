@@ -255,6 +255,8 @@ paths:
                     endTime:
                       type: string
                       format: date-time
+                    isOpen:
+                        type: boolean
                     point:
                       type: number
                       example: 10
@@ -318,6 +320,7 @@ paths:
                 - address
                 - startTime
                 - endTime
+                - isOpen
                 - point
               properties:
                 name:
@@ -330,6 +333,8 @@ paths:
                 endTime:
                   type: string
                   format: date-time
+                isOpen:
+                  type: boolean
                 point:
                   type: number
       responses:
@@ -366,6 +371,8 @@ paths:
                     endTime:
                       type: string
                       format: date-time
+                    isOpen:
+                      type: boolean
                     point:
                       type: number
                       example: 10
@@ -418,6 +425,8 @@ paths:
                   endTime:
                     type: string
                     format: date-time
+                  isOpen:
+                    type: boolean
                   point:
                     type: number
                     example: 10
@@ -494,6 +503,8 @@ paths:
                 endTime:
                   type: string
                   format: date-time
+                isOpen:
+                  type: boolean
                 point:
                   type: number
       responses:
@@ -528,6 +539,8 @@ paths:
                   endTime:
                     type: string
                     format: date-time
+                  isOpen:
+                    type: boolean
                   point:
                     type: number
                     example: 10
@@ -557,6 +570,8 @@ paths:
                             endTime:
                               type: string
                               format: date-time
+                            isOpen:
+                              type: boolean
                             point:
                               type: number
                               example: 100
@@ -605,7 +620,7 @@ paths:
               required:
                 - users
               properties:
-                userAuthorized:
+                usersAuthorized:
                   type: string
                   description: Người được ủy quyền điểm danh Mặc đinh là lớ trưởng)
                 users:
@@ -630,23 +645,25 @@ paths:
                   class:
                     type: string
                     example: 5ea2830702e1fa3db476eed0
-                  userAuthorized:
-                    type: string
-                    example: 5ea2830702e1fa3db9594830
+                  usersAuthorized:
+                    type: array
+                    items:
+                      type: string
+                      example: 5ea2830702e1fa3db9594830
                   users:
                     type: array
                     items:
                       type: object
                       properties:
-                        status:
-                          type: string
-                          example: unchecked
                         _id:
                           type: string
                           example: 5ea2830702e1f4gd745eeed0
                         user:
                           type: string
                           example: 5ea28307034feu3db95eeed0
+                        checked:
+                          type: boolean
+                          example: false
                   __v:
                     type: number
                 
@@ -671,7 +688,7 @@ paths:
               required:
                 - users
               properties:
-                userAuthorized:
+                usersAuthorized:
                   type: string
                   description: Người được ủy quyền điểm danh Mặc đinh là lớ trưởng)
                 users:
@@ -696,23 +713,119 @@ paths:
                   class:
                     type: string
                     example: 5ea2830702e1fa3db476eed0
-                  userAuthorized:
-                    type: string
-                    example: 5ea2830702e1fa3db9594830
+                  usersAuthorized:
+                    type: array
+                    items:
+                      type: string
+                      example: 5ea2830702e1fa3db9594830
                   users:
                     type: array
                     items:
                       type: object
                       properties:
-                        status:
-                          type: string
-                          example: unchecked
                         _id:
                           type: string
                           example: 5ea2830702e1f4gd745eeed0
                         user:
                           type: string
                           example: 5ea28307034feu3db95eeed0
+                        checked:
+                          type: boolean
+                          example: false
+                  __v:
+                    type: number
+  
+  /events/{eventId}/users-authorized:
+    post:
+      tags:
+        - Participant
+      summary: Đăng ký danh sách người phụ trách trong sự kiện mở (Dành cho quyền event)
+      security:
+        - Authorization: []
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          description: id sự kiện
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - usersAuthorized
+              properties:
+                usersAuthorized:
+                  type: array
+                  description: Người được ủy quyền điểm danh, phụ trách trong sự kiện
+                  items:
+                    type: string
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _id:
+                    type: string
+                    example: 5ea2830702e1fa3db95eeed0
+                  event:
+                    type: string
+                    example: 5ea2830702e1fa3db95eees3
+                  usersAuthorized:
+                    type: array
+                    items:
+                      type: string
+                      example: 5ea2830702e1fa3db9594830
+                  __v:
+                    type: number
+    put:
+      tags:
+        - Participant
+      summary: Sửa danh sách người phụ trách trong sự kiện mở (Dành cho quyền event)
+      security:
+        - Authorization: []
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          description: id sự kiện
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                usersAuthorized:
+                  type: array
+                  description: Người được ủy quyền điểm danh, phụ trách trong sự kiện
+                  items:
+                    type: string
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _id:
+                    type: string
+                    example: 5ea2830702e1fa3db95eeed0
+                  event:
+                    type: string
+                    example: 5ea2830702e1fa3db95eees3
+                  usersAuthorized:
+                    type: array
+                    items:
+                      type: string
+                      example: 5ea2830702e1fa3db9594830
                   __v:
                     type: number
 
@@ -765,7 +878,7 @@ paths:
         '200':
           description: success
 
-  /events/scan:
+  /events/{eventId}/scan:
     get:
       tags:
        - Scan code event
@@ -773,6 +886,12 @@ paths:
       security:
         - Authorization: []
       parameters:
+        - name: eventId
+          in: path
+          required: true
+          description: id sự kiện
+          schema:
+            type: string
         - name: code
           in: query
           required: true
