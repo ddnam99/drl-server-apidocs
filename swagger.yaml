@@ -246,6 +246,8 @@ paths:
                     name:
                       type: string
                       example: Đốt trường
+                    description:
+                      type: string
                     address:
                       type: string
                       example: T45
@@ -325,6 +327,8 @@ paths:
               properties:
                 name:
                   type: string
+                description:
+                  type: string
                 address:
                   type: string
                 startTime:
@@ -362,6 +366,8 @@ paths:
                     name:
                       type: string
                       example: Đốt trường
+                    description: 
+                      type: string
                     address:
                       type: string
                       example: T45
@@ -416,6 +422,8 @@ paths:
                   name:
                     type: string
                     example: Đốt trường
+                  description:
+                    type: string
                   address:
                     type: string
                     example: T45
@@ -495,6 +503,8 @@ paths:
               properties:
                 name:
                   type: string
+                description: 
+                  type: string
                 address:
                   type: string
                 startTime:
@@ -530,6 +540,8 @@ paths:
                   name:
                     type: string
                     example: Đốt trường
+                  description:
+                    type: string
                   address:
                     type: string
                     example: T45
